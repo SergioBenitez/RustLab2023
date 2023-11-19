@@ -3,9 +3,7 @@ extern crate rocket;
 
 mod auth;
 mod policy;
-mod dashboard;
 mod db;
-mod user;
 
 use rocket::Request;
 use rocket::fs::FileServer;
@@ -15,7 +13,7 @@ use rocket_dyn_templates::{Template, context};
 
 #[get("/")]
 fn index() -> Redirect {
-    Redirect::to(uri!(dashboard::PATH, dashboard::admin))
+    Redirect::to(uri!(auth::PATH, auth::index))
 }
 
 #[catch(default)]
@@ -29,8 +27,6 @@ fn rocket() -> _ {
         .register("/", catchers![error])
         .mount("/", routes![index])
         .mount(auth::PATH, auth::routes())
-        .mount(dashboard::PATH, dashboard::routes())
-        .mount(user::PATH, user::routes())
         .mount("/", FileServer::from("static"))
         .attach(Template::fairing())
         .attach(db::stage())
