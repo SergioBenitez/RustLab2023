@@ -58,12 +58,14 @@ erDiagram
 ```
 git clone https://github.com/SergioBenitez/RustLab2023.git
 cd RustLab2023
-export DATABASE_URL="sqlite:$(pwd)/db/db.sqlite
+export DATABASE_URL="sqlite:$(pwd)/db/db.sqlite"
 cargo install sqlx-cli --no-default-features --features sqlite
 
 cd db
 cargo sqlx database create
 cargo sqlx migrate run
+
+cargo run
 ```
 
 # License
