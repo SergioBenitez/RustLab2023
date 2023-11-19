@@ -57,29 +57,6 @@ pub(in crate::policy) enum Role {
     Patient = 2,
 }
 
-impl Role {
-    pub(in crate::policy) fn as_str(&self) -> &str {
-        match self {
-            Role::Admin => "Administrator",
-            Role::Doctor => "Doctor",
-            Role::Patient => "Patient",
-        }
-    }
-}
-
-impl TryFrom<i64> for Role {
-    type Error = PolicyError;
-
-    fn try_from(value: i64) -> Result<Self, Self::Error> {
-        match value {
-            x if x == Role::Admin as i64 => Ok(Role::Admin),
-            x if x == Role::Doctor as i64 => Ok(Role::Doctor),
-            x if x == Role::Patient as i64 => Ok(Role::Patient),
-            _ => return Err(PolicyError::InvalidData),
-        }
-    }
-}
-
 impl FirstAccount<'_> {
     pub async fn create(mut self, user: Registration<'_>) -> Result<(), PolicyError> {
         let argon2 = Argon2::default();
@@ -114,28 +91,8 @@ impl Registration<'_> {
     }
 }
 
-pub struct UserToken {
-    id: i64,
-}
-
-impl ToString for UserToken {
-    fn to_string(&self) -> String {
-        self.id.to_string()
-    }
-}
-
 impl Login<'_> {
-    pub async fn verified(&self, mut conn: Connection<Db>) -> Result<UserToken, PolicyError> {
-        let user = query!("SELECT id, password, active, role FROM users WHERE email=?", self.email)
-            .fetch_one(conn.as_mut())
-            .await?;
-
-        let argon2 = Argon2::default();
-        let parsed_hash = PasswordHash::new(&user.password)?;
-        match argon2.verify_password(self.password.as_bytes(), &parsed_hash) {
-            Ok(()) if user.active => Ok(UserToken{ id: user.id }),
-            Ok(()) => Err(PolicyError::Inactive),
-            Err(e) => Err(e.into()),
-        }
+    pub async fn verified(&self, mut conn: Connection<Db>) -> Result<(), PolicyError> {
+        todo!()
     }
 }

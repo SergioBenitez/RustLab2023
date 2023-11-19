@@ -86,31 +86,14 @@ async fn login_form(
     db: Connection<Db>,
     form: Form<Contextual<'_, Login<'_>>>
 ) -> Result<Redirect, Template> {
-    use rocket::form::Error;
-
-    let mut form = form.into_inner();
-    if let Some(login) = form.value {
-        let msg = match login.verified(db).await {
-            Err(PolicyError::Inactive) => "account is not yet active",
-            Err(_) => "login failed",
-            Ok(token) => {
-                // TODO: Enable revocation, renewable short expiration.
-                jar.add_private(("token", token.to_string()));
-                return Ok(Redirect::to(uri!(crate::index)));
-            }
-        };
-
-        form.context.push_error(Error::validation(msg).with_name("password"));
-        return Err(Template::render("login", context! { context: &form.context }));
-    }
+    todo!("login");
 
     Err(Template::render("login", context! { context: &form.context }))
 }
 
 #[get("/logout")]
 async fn logout(jar: &CookieJar<'_>) -> Redirect {
-    jar.remove_private("token");
-    Redirect::to(uri!(crate::index))
+    todo!("logout")
 }
 
 pub fn routes() -> Vec<Route> {
