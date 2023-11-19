@@ -66,67 +66,7 @@ impl<'r> FromRequest<'r> for User<'r> {
     type Error = PolicyError;
 
     async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
-        let conn = Db::fetch(req.rocket())
-            .or_forward(Status::ServiceUnavailable);
-
-        let token = req.cookies()
-            .get_private("token")
-            .or_forward(Status::Unauthorized);
-
-        let (cookie, conn) = (try_outcome!(token), try_outcome!(conn));
-        let id = match cookie.value().parse::<i64>() {
-            Ok(id) => id,
-            Err(_) => return Outcome::Error((Status::InternalServerError, PolicyError::InvalidData))
-        };
-
-        let user = sqlx::query!("SELECT name, active, role FROM users WHERE id=?", id)
-            .fetch_one(&**conn)
-            .await
-            .map_err(|e| PolicyError::Db(e))
-            .or_error(Status::InternalServerError);
-
-        let user = try_outcome!(user);
-        let role = Role::try_from(user.role).or_error(Status::InternalServerError);
-        Outcome::Success(User { id, name: user.name, role: try_outcome!(role), _req: PhantomData })
-    }
-}
-
-#[rocket::async_trait]
-impl<'r> FromRequest<'r> for Admin<'r> {
-    type Error = PolicyError;
-
-    async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
-        let user: User<'r>  = try_outcome!(req.guard().await);
-        match user.role {
-            Role::Admin => Outcome::Success(Admin(user)),
-            _ => Outcome::Forward(Status::Unauthorized)
-        }
-    }
-}
-
-#[rocket::async_trait]
-impl<'r> FromRequest<'r> for Doctor<'r> {
-    type Error = PolicyError;
-
-    async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
-        let user: User<'r>  = try_outcome!(req.guard().await);
-        match user.role {
-            Role::Doctor => Outcome::Success(Doctor(user)),
-            _ => Outcome::Forward(Status::Unauthorized)
-        }
-    }
-}
-
-#[rocket::async_trait]
-impl<'r> FromRequest<'r> for Patient<'r> {
-    type Error = PolicyError;
-
-    async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
-        let user: User<'r>  = try_outcome!(req.guard().await);
-        match user.role {
-            Role::Patient => Outcome::Success(Patient(user)),
-            _ => Outcome::Forward(Status::Unauthorized)
-        }
+        todo!()
     }
 }
 
@@ -144,40 +84,5 @@ pub struct UserData<'r> {
 impl serde::Serialize for Role {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         self.as_str().serialize(serializer)
-    }
-}
-
-impl<'r> Admin<'r> {
-    pub async fn fetch_all_users(
-        &self,
-        conn: &'r mut Connection<Db>
-    ) -> Result<Vec<UserData<'r>>, PolicyError> {
-        let users = sqlx::query!("
-                SELECT id, name, role, email, active FROM users WHERE id != ?
-            ", self.id)
-            .fetch(conn.as_mut())
-            .map_ok(|r| UserData {
-                id: r.id,
-                name: r.name,
-                role: Role::try_from(r.role).ok(),
-                email: Some(r.email),
-                active: Some(r.active),
-                _req: PhantomData
-            })
-            .try_collect::<Vec<_>>()
-            .await?;
-
-        Ok(users)
-    }
-
-    pub async fn set_status(
-        &self,
-        id: i64,
-        status: bool,
-        conn: &'r mut Connection<Db>
-    ) -> Result<(), PolicyError> {
-        let query = sqlx::query!("UPDATE users SET active = ? WHERE id = ?", status, id);
-        query.execute(conn.as_mut()).await?;
-        Ok(())
     }
 }

@@ -10,13 +10,10 @@ pub const PATH: Origin<'static> = uri!("/user");
 
 #[put("/<id>/active?<value>")]
 async fn set_active(
-    admin: Admin<'_>,
-    mut conn: Connection<Db>,
     id: i64,
     value: bool,
 ) -> Result<Redirect, Debug<PolicyError>> {
-    admin.set_status(id, value, &mut conn).await?;
-    Ok(Redirect::to(uri!(crate::index)))
+    todo!()
 }
 
 pub fn routes() -> Vec<Route> {
