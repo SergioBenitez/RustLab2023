@@ -1,0 +1,38 @@
+{% extends "base" %}
+
+{% block title %} Login {% endblock title %}
+
+{% block page %}
+<div class="page page-center">
+  <div class="container container-tight py-4">
+    <div class="card card-md">
+      <div class="card-body">
+        <h2 class="h2 text-center mb-4">Login</h2>
+        <form action="/auth/login" method="post" novalidate>
+          <div class="mb-3">
+            <label class="form-label" for="email">Email Address</label>
+            <input type="email" id="email" name="email"
+              class='form-control {{ m::fieldclass(field="email") }}'
+              value='{{ m::value_for(field="email") }}'
+              placeholder="your@email.com" autocomplete="off">
+              {{ m::errors_for(field="email") }}
+          </div>
+          <div class="mb-2">
+            <label class="form-label" for="password">Password</label>
+            <input type="password" id="password" name="password"
+              class='form-control {{ m::fieldclass(field="password") }}'
+              placeholder="Your Password" autocomplete="off">
+              {{ m::errors_for(field="password") }}
+          </div>
+          <div class="form-footer">
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="text-center text-muted mt-3">
+      Don't have an account yet? <a href="/auth/register" tabindex="-1">Register</a>
+    </div>
+  </div>
+</div>
+{% endblock page %}

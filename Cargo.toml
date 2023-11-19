@@ -1,0 +1,19 @@
+[package]
+name = "rocket-ehr"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+rocket = { version = "0.5", features = ["secrets", "json"] }
+rocket_dyn_templates = { version = "0.1", features = ["tera"] }
+rocket_db_pools = { version = "0.1", features = ["sqlx_sqlite"] }
+argon2 = { version = "0.5", features = ["password-hash"] }
+password-hash = { version = "0.5", features = ["std"] }
+thiserror = "1.0"
+either = "1.9"
+
+[dependencies.sqlx]
+version = "0.7.0"
+default-features = false
+features = ["macros", "migrate"]

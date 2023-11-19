@@ -1,0 +1,5 @@
+[debug]
+secret_key = "CPBlep8ezamjRIo3wLrFeCfQGu2y5DghnK8wUBq13LpHUMaHvMKfezBjl608iUe3cOwjhTy825c/zBfziwTKsw=="
+
+[default.databases.main]
+url = "db/db.sqlite"

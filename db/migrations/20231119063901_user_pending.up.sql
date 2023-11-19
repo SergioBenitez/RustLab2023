@@ -1,0 +1,3 @@
+ALTER TABLE users
+    ADD active BOOLEAN NOT NULL DEFAULT 0
+;

@@ -1,0 +1,20 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT EXISTS (SELECT 1 from users) AS nonempty",
+  "describe": {
+    "columns": [
+      {
+        "name": "nonempty",
+        "ordinal": 0,
+        "type_info": "Int"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "e4762dfd6d7a83fbc26b5123261dee9b6c31ff5c753f18bf773e92671e91a66a"
+}

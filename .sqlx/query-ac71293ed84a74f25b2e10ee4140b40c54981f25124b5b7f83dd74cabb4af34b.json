@@ -1,0 +1,38 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT id, password, active, role FROM users WHERE email=?",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Int64"
+      },
+      {
+        "name": "password",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "active",
+        "ordinal": 2,
+        "type_info": "Bool"
+      },
+      {
+        "name": "role",
+        "ordinal": 3,
+        "type_info": "Int64"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "ac71293ed84a74f25b2e10ee4140b40c54981f25124b5b7f83dd74cabb4af34b"
+}
